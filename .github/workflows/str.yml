@@ -1,0 +1,35 @@
+name: buildarti
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    if: github.repository_owner == 'IntellectualSites'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+
+      - name: Validate Gradle Wrapper
+        uses: gradle/actions/wrapper-validation@v6
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Clean Build
+        run: ./gradlew clean build
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: |
+            **/build/libs/*.jar
+          if-no-files-found: error
